@@ -7,7 +7,8 @@ import scipy.io.wavfile
 import numpy as np
 # import matplotlib.pyplot as plt
 
-from config import SAMPLE_RATE, WINDOW_SIZE, WINDOW_STEP
+from config import SAMPLE_RATE, WINDOW_SIZE, WINDOW_STEP, SECONDS_BEFORE, \
+    SECONDS_AFTER
 
 logging.basicConfig(level=logging.INFO)
 
@@ -18,9 +19,16 @@ logging.basicConfig(level=logging.INFO)
 class ClapExtractor(object):
     """Extract Claps from audio files and save as files"""
 
-    def __init__(self, raw_clap_dir, sample_rate=SAMPLE_RATE):
+    def __init__(self,
+                 raw_clap_dir,
+                 sample_rate=SAMPLE_RATE,
+                 seconds_before=SECONDS_BEFORE,
+                 seconds_after=SECONDS_AFTER):
         self._files = glob.glob(os.path.join(raw_clap_dir, '*.wav'))
         self._sample_rate = sample_rate
+
+        self._samples_before = seconds_before * self._sample_rate
+        self._samples_after = seconds_after * self._sample_rate
 
     def extract_claps(self, extracted_claps_dir, threshold_percentile):
         """
@@ -45,22 +53,26 @@ class ClapExtractor(object):
 
             distilled_peaks = self._distill_peaks(data, peaks)
 
-            logging.info('Found {} peaks in {}'.format(
+            logging.info('Found {} peaks in {}. Saving...'.format(
                 sum(distilled_peaks), clap_file
             ))
+            self._save_claps(signed_data, peaks, extracted_claps_dir)
 
             i += 1
 
     def _save_claps(self, data, peaks, extracted_claps_dir):
-        for i in np.nonzero(peaks):
-            clap_data = data[i-self._samples_before, i+self._samples_after]
+        for i in np.nonzero(peaks)[0]:
+            clap_data = data[i-self._samples_before:i+self._samples_after]
 
-            scipy.io.wavfile.write('clap_{}.wav'.format(self._clap_index),
-                                   self._sample_rate,
-                                   clap_data)
+            scipy.io.wavfile.write(
+                os.path.join(
+                    extracted_claps_dir,
+                    'clap_{}.wav'.format(self._clap_index)
+                ),
+                self._sample_rate,
+                clap_data)
 
             self._clap_index += 1
-
 
     def _get_peaks(self, data, threshold_percentile):
         # - use top n percent as threshold.
@@ -69,6 +81,7 @@ class ClapExtractor(object):
         clap_threshold = np.percentile(data, threshold_percentile)
         return data > clap_threshold
 
+    # FIXME TODO bad practice to use SAMPLE_RATE! use self._sample_rate
     def _distill_peaks(self,
                        data,
                        peaks,
