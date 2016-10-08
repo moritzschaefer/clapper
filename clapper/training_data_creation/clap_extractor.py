@@ -7,7 +7,7 @@ import scipy.io.wavfile
 import numpy as np
 # import matplotlib.pyplot as plt
 
-from config import SAMPLE_RATE, WINDOW_SIZE, WINDOW_STEP, SECONDS_BEFORE, \
+from config import SAMPLE_RATE, EXTRACT_WINDOW_SIZE, EXTRACT_WINDOW_STEP, SECONDS_BEFORE, \
     SECONDS_AFTER
 
 logging.basicConfig(level=logging.INFO)
@@ -85,8 +85,8 @@ class ClapExtractor(object):
     def _distill_peaks(self,
                        data,
                        peaks,
-                       window_size=int(WINDOW_SIZE * SAMPLE_RATE),
-                       window_step=int(WINDOW_STEP * SAMPLE_RATE)):
+                       window_size=int(EXTRACT_WINDOW_SIZE * SAMPLE_RATE),
+                       window_step=int(EXTRACT_WINDOW_STEP * SAMPLE_RATE)):
         """ Extracts only one point per peak.
             Window over data (0.7), hoplength: 0.4, delete all but the max
 
