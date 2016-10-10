@@ -38,7 +38,6 @@ class SampleCreator(object):
         shutil.rmtree(target_dir, ignore_errors=True)
         os.makedirs(target_dir)
         self._distortion_index = 0
-        self.mx = 0
 
         i = 0
         num_distortions_per_file = \
@@ -63,12 +62,12 @@ class SampleCreator(object):
                                    merge_claps)
 
             i += 1
-        print(self.mx)
 
     def _merge_clap_data(self, data):
         clap_file = np.random.choice(self._clap_files)
         _, clap_data = scipy.io.wavfile.read(clap_file)
         start_index = np.random.randint(0, FFT_SIZE)
+        # TODO: lower(leiser) clap_data this randomly
         clap_data = np.concatenate((np.array(start_index * [0],
                                              dtype=np.int16),
                                     clap_data))[:len(data)]
@@ -97,9 +96,6 @@ class SampleCreator(object):
             else:
                 target_filename = \
                     'distortion_{}.wav'.format(self._distortion_index)
-
-            if max(sample_data) > self.mx:
-                self.mx = max(sample_data)
 
             scipy.io.wavfile.write(
                 os.path.join(

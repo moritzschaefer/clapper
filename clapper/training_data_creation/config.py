@@ -17,7 +17,7 @@ FFT_SIZE = 512
 SAMPLE_WIDTH = 2  # one sample has 2 bytes (16 bits)
 
 # number of windows used for the feature vector for classifying a clap
-NUM_WINDOWS = math.ceil(SECONDS_BEFORE+SECONDS_AFTER)/(FFT_SIZE/SAMPLE_RATE)
+NUM_WINDOWS = math.floor(SECONDS_BEFORE+SECONDS_AFTER)/(FFT_SIZE/SAMPLE_RATE)
 
 
 # Clap extraction
