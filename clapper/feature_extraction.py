@@ -1,6 +1,6 @@
 import numpy as np
 
-from config import FFT_SIZE, NUM_WINDOWS
+from training_data_creation.config import FFT_SIZE, NUM_WINDOWS, NUM_FEATURES
 
 
 def transform_to_freq(data):
@@ -25,10 +25,10 @@ def extract_features(data):
         raise ValueError('data contains too few frames.')
 
     # TODO check if np.int16 is correct!
-    features = np.zeros((NUM_WINDOWS * FFT_SIZE / 2, ), dtype=np.int16)
-    for i in NUM_WINDOWS:
+    features = np.zeros((NUM_FEATURES, ), dtype=np.float64)
+    for i in range(NUM_WINDOWS):
         transformed = transform_to_freq(data[i*FFT_SIZE:(i+1)*FFT_SIZE])
 
-        features[i*FFT_SIZE/2:(i+1)*FFT_SIZE/2] = transformed
+        features[(i*((FFT_SIZE/2)+1)):(i+1)*((FFT_SIZE/2)+1)] = transformed
 
     return features

@@ -7,8 +7,8 @@ import scipy.io.wavfile
 import numpy as np
 # import matplotlib.pyplot as plt
 
-from config import SAMPLE_RATE, EXTRACT_WINDOW_SIZE, EXTRACT_WINDOW_STEP, SECONDS_BEFORE, \
-    SECONDS_AFTER
+from config import SAMPLE_RATE, EXTRACT_WINDOW_SIZE, EXTRACT_WINDOW_STEP, \
+    SECONDS_BEFORE, SECONDS_AFTER
 
 logging.basicConfig(level=logging.INFO)
 
