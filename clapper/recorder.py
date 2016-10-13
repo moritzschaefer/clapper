@@ -32,13 +32,13 @@ class Recorder:
 
             if l:
                 # convert to array
-                try:
-                    ints = struct.unpack('h'*self._fft_size, data)
-                except Exception as e:
-                    print(e)
+                ints = struct.unpack('h'*self._fft_size, data)
+                transformed = transform_to_freq(ints)
+                if np.isinf(transformed).any():
+                    logging.warn('inf detected. Skip window')
                     continue
 
-                self._windows[self._index, :] = transform_to_freq(ints)
+                self._windows[self._index, :] = transformed
                 self._index = (self._index + 1) % self._num_windows
                 indices = list(range(self._index, self._num_windows)) + \
                     list(range(0, self._index))

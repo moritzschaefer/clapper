@@ -72,7 +72,7 @@ def train(X, y):
           .format((y_test != y_pred).sum()/len(y_test),
                   prediction_time.interval/len(X_test_std)))
 
-    return ppn
+    return ppn, sc
 
 
 if __name__ == "__main__":
